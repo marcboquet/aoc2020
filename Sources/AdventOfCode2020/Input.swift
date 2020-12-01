@@ -1,6 +1,6 @@
 import Foundation
 
-struct AdventOfCode2020 {
+struct Input {
     var name: String
     
     public init(name: String) {
