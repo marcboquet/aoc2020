@@ -3,7 +3,7 @@ import XCTest
 
 final class AdventOfCode2020Tests: XCTestCase {
     func testExample() {
-        XCTAssertEqual(AdventOfCode2020().testRead(name: "test"), "Hello, World!")
+        XCTAssertEqual(AdventOfCode2020(name: "test").content, "Hello, World!")
     }
 
     static var allTests = [

@@ -1,9 +1,29 @@
 import Foundation
 
 struct AdventOfCode2020 {
-    func testRead(name: String) -> String {
+    var name: String
+    
+    public init(name: String) {
+        self.name = name
+    }
+    
+    public var content: String {
         let path = Bundle.module.path(forResource: name, ofType: nil)
         let content: String = try! String(contentsOfFile: path!, encoding: .utf8)
         return content.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+    }
+    
+    public func lines() -> [String] {
+        let lines: [String] = content.lines.compactMap { (line) -> String? in
+            return line.isEmpty ? nil : line
+        }
+        return lines
+    }
+    
+    public func lines() -> [Int] {
+        let lines: [Int] = content.lines.compactMap { (line) -> Int? in
+            return Int(line)
+        }
+        return lines
     }
 }
