@@ -3,8 +3,8 @@ import Foundation
 struct PasswordList {
     var passwords: [Password]
 
-    init(list: [String]) {
-        self.passwords = list.map { Password(policyAndPassword: $0) }
+    init(list: [String], policyType: PasswordPolicyProtocol.Type = PasswordPolicy.self) {
+        self.passwords = list.map { Password(policyAndPassword: $0, policyType: policyType) }
     }
     
     func valid() -> [Password] {
@@ -13,22 +13,26 @@ struct PasswordList {
 }
 
 struct Password {
-    var policy: PasswordPolicy
+    var policy: PasswordPolicyProtocol
     var password: String
 
-    init(policyAndPassword: String) {
+    init(policyAndPassword: String, policyType: PasswordPolicyProtocol.Type = PasswordPolicy.self) {
         let parts = policyAndPassword.split(separator: ":").map { String($0) }
-        self.policy = PasswordPolicy(policy: parts.first!)
+        self.policy = policyType.init(policy: parts.first!)
         self.password = parts.last!.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
     func isValid() -> Bool {
-        let occurrences = password.filter { $0 == policy.letter }.count
-        return policy.range.contains(occurrences)
+        return policy.isValid(password: password)
     }
 }
 
-struct PasswordPolicy {
+protocol PasswordPolicyProtocol {
+    init(policy: String)
+    func isValid(password: String) -> Bool
+}
+
+struct PasswordPolicy: PasswordPolicyProtocol {
     var range: ClosedRange<Int>
     var letter: Character
 
@@ -37,5 +41,26 @@ struct PasswordPolicy {
         let ranges: [Int] = parts[0].split(separator: "-").map { Int($0)! }
         self.range = ranges[0]...ranges[1]
         self.letter = parts[1].first!
+    }
+    
+    func isValid(password: String) -> Bool {
+        let occurrences = password.filter { $0 == letter }.count
+        return range.contains(occurrences)
+    }
+}
+
+struct NewPasswordPolicy: PasswordPolicyProtocol {
+    var positions: [Int]
+    var letter: Character
+
+    init(policy: String) {
+        let parts = policy.split(separator: " ")
+        self.positions = parts[0].split(separator: "-").map { Int($0)! - 1 }
+        self.letter = parts[1].first!
+    }
+    
+    func isValid(password: String) -> Bool {
+        let occurrences = positions.filter { password[String.Index(utf16Offset: $0, in: password)] == letter }.count
+        return occurrences == 1
     }
 }

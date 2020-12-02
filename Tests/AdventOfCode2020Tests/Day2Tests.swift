@@ -24,4 +24,9 @@ final class Day2Tests: XCTestCase {
         let list = PasswordList(list: Input(name: "2-input").lines())
         XCTAssertEqual(list.valid().count, 548)
     }
+    
+    func testPart2() {
+        let list = PasswordList(list: Input(name: "2-input").lines(), policyType: NewPasswordPolicy.self)
+        XCTAssertEqual(list.valid().count, 502)
+    }
 }
