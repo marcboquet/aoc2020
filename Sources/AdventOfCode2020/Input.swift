@@ -26,4 +26,10 @@ struct Input {
         }
         return lines
     }
+    
+    public func blankLineSeparated() -> [String] {
+        return content.components(separatedBy: "\n\n").map {
+            $0.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).replacingOccurrences(of: "\n", with: " ")
+        }
+    }
 }
