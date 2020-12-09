@@ -34,15 +34,17 @@ struct XMASEncoding {
         let number = firstInvalid()
         var index = 0
         var size = 2
+        var sum = numbers[index..<index+size].reduce(0, +)
         repeat {
-            let sum = numbers[index..<index+size].reduce(0, +)
             if sum == number {
                 return numbers[index..<index+size].max()! + numbers[index..<index+size].min()!
             }
             if sum < number {
                 size += 1
+                sum += numbers[index+size-1]
             } else {
-                size = 2
+                size -= 1
+                sum -= numbers[index]
                 index += 1
             }
         } while index < numbers.count
